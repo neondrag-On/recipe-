@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Recipes</title>
+    <style>
+                /* Header and navigation */
+                header {
+            background-color: #995555;
+            color: rgb(152, 87, 87);
+            padding: 30px;
+        }
+
+    .share-buttons {
+        margin-top: 10px;
+    }
+    .share-buttons button,
+    .share-buttons a {
+        margin-right: 10px;
+        padding: 5px 10px;
+        background-color: #ff6347;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .share-buttons button:hover,
+    .share-buttons a:hover {
+        background-color: #e5533c;
+    }
+
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .recipe-item {
+            margin: 10px auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="add_recipe.html">Add Recipe</a></li>
+                <li><a href="tags.html">Tags</a></li>
+                <li><a href="search_recipe.html">Search Recipe</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <h1>Search for a Recipe</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-bar" placeholder="Search recipes by name...">
+    </div>
+
+    <div id="recipeDisplay"></div>
+
+    <script>
+        // Load recipes from localStorage
+        function loadRecipes() {
+            const storedRecipes = localStorage.getItem('recipes');
+            return storedRecipes ? JSON.parse(storedRecipes) : [];
+        }
+    
+        // Function to display recipes
+        function displayRecipes(recipes) {
+    const recipeDisplay = document.getElementById('recipeDisplay');
+    recipeDisplay.innerHTML = '';
+
+    if (recipes.length > 0) {
+        recipes.forEach(recipe => {
+            const div = document.createElement('div');
+            div.className = 'recipe-item';
+            
+            // Create image element
+            const img = document.createElement('img');
+            img.src = recipe.image || 'placeholder-image-url'; // Use a placeholder if no image is available
+            img.alt = recipe.name;
+            img.style.maxWidth = '150px';
+            img.style.marginRight = '10px';
+
+            // Create a container for recipe details
+            const recipeDetails = document.createElement('div');
+            recipeDetails.innerHTML = `
+                <strong>${recipe.name}</strong><br>
+                Ingredients: ${recipe.ingredients}<br>
+                Method: ${recipe.method}
+            `;
+
+            // Create share buttons
+            const shareContainer = document.createElement('div');
+            shareContainer.className = 'share-buttons';
+            const recipeURL = encodeURIComponent(window.location.href + `#recipe-${recipe.name.replace(/\s+/g, '-')}`);
+            shareContainer.innerHTML = `
+                <button onclick="copyToClipboard('${recipeURL}')">Copy Recipe Link</button>
+                <a href="mailto:?subject=Check%20out%20this%20recipe&body=${recipeURL}" target="_blank">Share via Email</a>
+            `;
+
+            // Append image, details, and share buttons to the div
+            div.appendChild(img);
+            div.appendChild(recipeDetails);
+            div.appendChild(shareContainer);
+
+            recipeDisplay.appendChild(div);
+        });
+    } else {
+        recipeDisplay.innerHTML = '<p>No recipes found.</p>';
+    }
+}
+
+function copyToClipboard(url) {
+    navigator.clipboard.writeText(url)
+        .then(() => alert('Recipe link copied to clipboard!'))
+        .catch(err => alert('Failed to copy text: ' + err));
+}
+
+        // Search recipes by name
+        function searchRecipes() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const recipes = loadRecipes();
+            const filteredRecipes = recipes.filter(recipe => recipe.name.toLowerCase().includes(query));
+            displayRecipes(filteredRecipes);
+        }
+    
+        // Event listener for search bar input
+        document.getElementById('searchBar').addEventListener('input', searchRecipes);
+    
+        // Initial display of all recipes (optional)
+        // To ensure it only displays search results, the above line should be commented out or removed.
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookbook Haven</title>
+    <style>
+        /* General body styling */
+        h1{
+            text-align: center;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header and navigation */
+        header {
+            background-color: #995555;
+            color: rgb(152, 87, 87);
+            padding: 30px;
+            position: relative; /* To position login/signup buttons absolutely */
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons in the header */
+        .auth-buttons {
+            position: absolute;
+            right: 30px; /* Adjust as needed */
+            top: 30px; /* Adjust as needed */
+        }
+        .auth-buttons a {
+            background-color: #811605;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        .auth-buttons a:hover {
+            background-color: #e5533c;
+        }
+
+        /* Background image and title section */
+        .hero {
+            position: relative;
+            background-image: url("image.png"); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            width: 90%; /* Full width of the viewport */
+            color: rgb(255, 255, 255);
+            text-align: center;
+            padding: 50px 50px;
+            box-sizing: border-box; /* Ensure padding is included in the width */
+            margin: 30px auto; /* Center horizontally and add margin */
+        }
+        .hero h1 {
+            font-size: 40px; /* Adjust font size as needed */
+            text-decoration: double;
+            margin: 0; /* Remove default margins */
+            padding: 0; /* Remove default padding */
+            position: absolute;
+            top: 45%; /* Adjust position relative to the image */
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center horizontally */
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin: 20px 0 0; /* Adjust margin to control spacing */
+            padding: 0;
+            position: absolute;
+            top: 53%; /* Place below the title */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+        }
+
+        /* Recipes section */
+        .recipes {
+            padding: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center the content */
+            gap: 20px; /* Adjust the gap between the items */
+        }
+        .recipe {
+            width: 30%; /* Adjust width to ensure 3 items per row */
+            margin: 10px 0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .recipe img {
+            width: 80%;
+            height: 220px; /* Set a consistent height */
+            object-fit: cover; /* Ensures the image fills the area while maintaining aspect ratio */
+            border-radius: 5px;
+        }
+        .recipe h3 {
+            margin: 10px 0 5px;
+            font-size: 1.2rem;
+        }
+        .recipe p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with navigation and auth buttons -->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="add_recipe.html">Add Recipe</a></li>
+                <li><a href="tags.html">Tags</a></li>
+                <li><a href="search_recipe.html">Search Recipe</a></li>
+            
+                
+            </ul>
+        </nav>
+
+        <div class="auth-buttons">
+            <a href="login.php">Login</a>
+            <a href="signup.php">Signup</a>
+        </div>
+    </header>
+    <div class="auth-buttons">
+        <a href="login.php">Login</a>
+        <a href="signup.php">Signup</a>
+    </div>
+    
+    <!-- Hero section with background image and text -->
+    <div class="hero">
+        <h1>Cookbook Haven</h1>
+        <p>A World of Flavors</p>
+    </div>
+
+    <!-- Recipes section -->
+    <div class="recipes">
+        <!-- Example recipe items -->
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\butterchicken.jpg" alt="Recipe 1">   <!-- Replace with your image path -->
+            <h3>Butter chicken</h3>
+            <p>Prep Time: 20 mins</p>
+            <p>Cook Time: 30 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\haleem.jpg" alt="Recipe 2"> <!-- Replace with your image path -->
+            <h3>Haleem</h3>
+            <p>Prep Time: 15 mins</p>
+            <p>Cook Time: 25 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\biryani.jpg" alt="Recipe 5">
+            <h3>Biryani </h3>
+            <p>Prep Time: 15 mins</p>
+            <p>Cook Time: 40 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Beef stroganoff with rice.jpg" alt="Recipe 6">
+            <h3>Beef Stroganoff </h3>
+            <p>Prep Time: 20 mins</p>
+            <p>Cook Time: 30 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Chicken Pad Thai (Takeout-Style).jpg" alt="Recipe 7">
+            <h3>Pad Thai </h3>
+            <p>Prep Time: 15 mins</p>
+            <p>Cook Time: 20 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Spaghetti Carbonara.jpg" alt="Recipe 1">
+            <h3>Spaghetti Carbonara</h3>
+            <p>Prep Time: 15 mins</p>
+            <p>Cook Time: 20 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Six dumpling sauces.jpg" alt="Recipe 2">
+            <h3>Dumplings </h3>
+            <p>Prep Time: 30 mins</p>
+            <p>Cook Time: 45 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Spaghetti Carbonara.jpg" alt="Recipe 3">
+            <h3>Sushi Rolls </h3>
+            <p>Prep Time: 20 mins</p>
+            <p>Cook Time: 10 mins</p>
+        </div>
+        <div class="recipe">
+            <img src="C:\Users\hi\Downloads\Crispy Chipotle Sweet Potato Tacos with Lime Crema_.jpg" alt="Recipe 4">
+            <h3>Tacos </h3>
+            <p>Prep Time: 10 mins</p>
+            <p>Cook Time: 15 mins</p>
+        </div>
+        <!-- Add more recipes as needed -->
+    </div>
+
+</body>
+</html>
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+       <style>
+    /* Add basic styling for the header */
+
+h1 {
+  text-align: center;
+}
+
+    header {
+        background-color: #333;
+        color: white;
+        padding: 10px;
+    }
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+    nav ul li {
+        margin: 0 15px;
+    }
+    nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+    }
+    nav ul li a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+</head>
+<body>
+   <h1 align:center> RECIPE BOOK</h1>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="add_recipe.html">Add Recipe</a></li>
+                <li><a href="tags.html">Tags</a></li>
+                <li><a href="search_recipe.html">Search Recipe</a></li>
+                <li><a href="header.html"></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        
+    </main>
+    
+
+</body>
+</html>

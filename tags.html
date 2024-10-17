@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Tags</title>
+    <style>
+        /* Header and navigation */
+        header {
+            background-color: #995555;
+            color: rgb(152, 87, 87);
+            padding: 30px;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .tag-button {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            width: 200px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .tag-button:hover {
+            background-color: #e5533c;
+        }
+        .recipes-list {
+            margin-top: 20px;
+        }
+        .recipe-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .recipe-item img {
+            max-width: 150px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .recipe-item .recipe-details {
+            flex: 1;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .action-buttons button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #ff6347;
+        }
+        .action-buttons button:hover {
+            color: #e5533c;
+        }
+        .action-buttons .edit-icon {
+            color: #1e90ff; /* Blue color for edit icon */
+        }
+        .action-buttons .delete-icon {
+            color: #ff6347; /* Red color for delete icon */
+        }
+        .share-buttons {
+            margin-top: 10px;
+        }
+        .share-buttons button,
+        .share-buttons a {
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .share-buttons button:hover,
+        .share-buttons a:hover {
+            background-color: #e5533c;
+        }
+        .share-options {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 100;
+        }
+        .share-options button,
+        .share-options a {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="add_recipe.html">Add Recipe</a></li>
+                <li><a href="tags.html">Tags</a></li>
+                <li><a href="search_recipe.html">Search Recipe</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Select a Food Category</h1>
+
+    <div class="tag-container" id="tagContainer">
+        <!-- Tag buttons will be populated by JS -->
+    </div>
+
+    <div id="recipeDisplay" class="recipes-list"></div>
+
+    <script>
+        // Load recipes from localStorage
+        function loadRecipes() {
+            const storedRecipes = localStorage.getItem('recipes');
+            return storedRecipes ? JSON.parse(storedRecipes) : [];
+        }
+        
+        // Display recipes by category
+        function showRecipes(category) {
+            const recipeDisplay = document.getElementById('recipeDisplay');
+            recipeDisplay.innerHTML = '';
+            const recipes = loadRecipes();
+            const filteredRecipes = recipes.filter(recipe => recipe.category.toLowerCase() === category);
+
+            if (filteredRecipes.length > 0) {
+                filteredRecipes.forEach((recipe, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'recipe-item';
+                    
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = recipe.image || 'placeholder-image-url'; // Use a placeholder if no image is available
+                    img.alt = recipe.name;
+
+                    // Create a container for recipe details
+                    const recipeDetails = document.createElement('div');
+                    recipeDetails.className = 'recipe-details';
+                    recipeDetails.innerHTML = `
+                        <strong>${recipe.name}</strong><br>
+                        Ingredients: ${recipe.ingredients}<br>
+                        Method: ${recipe.method}
+                    `;
+
+                    // Create action buttons
+                    const actionContainer = document.createElement('div');
+                    actionContainer.className = 'action-buttons';
+                    actionContainer.innerHTML = `
+                        <button class="edit-icon" onclick="editRecipe(${index})">✎</button>
+                        <button class="delete-icon" onclick="deleteRecipe(${index})">🗑️</button>
+                        <button onclick="toggleShareOptions(${index})">🔗</button>
+                        <div id="shareOptions-${index}" class="share-options">
+                            <button onclick="copyToClipboard('${encodeURIComponent(window.location.href + `#recipe-${recipe.name.replace(/\s+/g, '-')}`)}')">Copy Recipe Link</button>
+                            <a href="mailto:?subject=Check%20out%20this%20recipe&body=${encodeURIComponent(window.location.href + `#recipe-${recipe.name.replace(/\s+/g, '-')}`)}" target="_blank">Share via Email</a>
+                        </div>
+                    `;
+
+                    // Append image, details, and action buttons to the div
+                    div.appendChild(img);
+                    div.appendChild(recipeDetails);
+                    div.appendChild(actionContainer);
+
+                    recipeDisplay.appendChild(div);
+                });
+            } else {
+                recipeDisplay.innerHTML = '<p>No recipes found.</p>';
+            }
+        }
+
+        function copyToClipboard(url) {
+            navigator.clipboard.writeText(url)
+                .then(() => alert('Recipe link copied to clipboard!'))
+                .catch(err => alert('Failed to copy text: ' + err));
+        }
+        
+        function toggleShareOptions(index) {
+            const shareOptions = document.getElementById(`shareOptions-${index}`);
+            shareOptions.style.display = shareOptions.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Update tag buttons with the correct count of recipes
+        function updateTagButtons() {
+            const categories = ['breakfast', 'lunch', 'dinner', 'snacks', 'indian', 'chinese','desserts','italian','continental'];
+            const tagContainer = document.getElementById('tagContainer');
+            const recipes = loadRecipes();
+            
+            // Clear existing buttons
+            tagContainer.innerHTML = '';
+        
+            categories.forEach(category => {
+                const count = recipes.filter(recipe => recipe.category.toLowerCase() === category).length;
+                const button = document.createElement('button');
+                button.className = 'tag-button';
+                button.textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} (${count} recipes)`;
+                button.onclick = () => showRecipes(category);
+                tagContainer.appendChild(button);
+            });
+        }
+        
+        // Function to edit a recipe
+        function editRecipe(index) {
+            const recipes = loadRecipes();
+            const recipe = recipes[index];
+            const queryParams = new URLSearchParams({
+                mode: 'edit',
+                index: index
+            }).toString();
+            window.location.href = `add_recipe.html?${queryParams}`;
+        }
+        
+        // Function to delete a recipe
+        function deleteRecipe(index) {
+            let recipes = loadRecipes();
+            recipes.splice(index, 1); // Remove recipe at index
+            saveRecipes(recipes);
+            showRecipes(document.querySelector('.tag-button.active')?.textContent.split(' ')[0].toLowerCase()); // Refresh
+            alert('Recipe deleted!');
+            setTimeout(() => location.reload(), 1000); // Refresh the page after 1 second
+        }
+        
+        // Save recipes to localStorage
+        function saveRecipes(recipes) {
+            localStorage.setItem('recipes', JSON.stringify(recipes));
+        }
+        
+        // Initial call to update buttons with recipe counts
+        updateTagButtons();
+    </script>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Tags</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .tag-button {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            width: 200px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .tag-button:hover {
+            background-color: #e5533c;
+        }
+        .recipes-list {
+            margin-top: 20px;
+        }
+        .recipe-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Select a Food Category</h1>
+
+    <div class="tag-container">
+
+        <button class="tag-button" onclick="showRecipes('breakfast')">Breakfast (3 recipes)</button>
+        <button class="tag-button" onclick="showRecipes('lunch')">Lunch (2 recipes)</button>
+        <button class="tag-button" onclick="showRecipes('dinner')">Dinner (4 recipes)</button>
+        <button class="tag-button" onclick="showRecipes('snacks')">Snacks (5 recipes)</button>
+        <button class="tag-button" onclick="showRecipes('indian')">Indian (6 recipes)</button>
+        <button class="tag-button" onclick="showRecipes('chinese')">Chinese (3 recipes)</button>
+    </div>
+
+    <div id="recipeDisplay" class="recipes-list"></div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+-->

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe</title>
+    <style>
+                /* Header and navigation */
+                header {
+            background-color: #995555;
+            color: rgb(152, 87, 87);
+            padding: 30px;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, textarea, select {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .action-button {
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .action-button:hover {
+            background-color: #e5533c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="add_recipe.html">Add Recipe</a></li>
+                <li><a href="tags.html">Tags</a></li>
+                <li><a href="search_recipe.html">Search Recipe</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main>
+        <h2>Add a New Recipe</h2>
+        <form id="recipeForm">
+            <label for="recipeName">Recipe Name:</label>
+            <input type="text" id="recipeName" required>
+
+            <label for="ingredients">Ingredients:</label>
+            <textarea id="ingredients" required></textarea>
+
+            <label for="category">Category:</label>
+            <select id="category" required>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snacks">Snacks</option>
+                <option value="indian">Indian</option>
+                <option value="chinese">Chinese</option>
+                <option value="desserts">Desserts</option>
+                <option value="italian">Italian</option>
+                <option value="continental">Continental</option>
+            </select>
+
+            <label for="method">Method of Preparation:</label>
+            <textarea id="method" required></textarea>
+
+            <label for="recipeImage">Upload Recipe Image:</label>
+            <input type="file" id="recipeImage" accept="image/*">
+            
+            <!-- Image preview area -->
+            <div id="imagePreview"></div>
+            
+            <div class="button-container">
+                <button type="button" id="saveBtn" class="action-button">Save</button>
+                <button type="button" id="clearBtn" class="action-button">Clear</button>
+            </div>
+
+            
+        </form>
+    </main>
+
+    <script>
+        // Load recipes from localStorage
+        function loadRecipes() {
+            const storedRecipes = localStorage.getItem('recipes');
+            return storedRecipes ? JSON.parse(storedRecipes) : [];
+        }
+    
+        // Save recipes to localStorage
+        function saveRecipes(recipes) {
+            localStorage.setItem('recipes', JSON.stringify(recipes));
+        }
+    
+        // Function to add a new recipe
+        function addRecipe() {
+            const name = document.getElementById('recipeName').value;
+            const ingredients = document.getElementById('ingredients').value;
+            const category = document.getElementById('category').value;
+            const method = document.getElementById('method').value;
+            const imageFile = document.getElementById('recipeImage').files[0];
+    
+            // Create a new recipe object
+            const newRecipe = {
+                name: name,
+                ingredients: ingredients,
+                category: category,
+                method: method,
+                image: ''
+            };
+    
+            // If an image file is selected, read it as a Base64 string
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    newRecipe.image = event.target.result; // Base64 string
+                    saveRecipeData(newRecipe);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveRecipeData(newRecipe);
+            }
+        }
+    
+        // Save the recipe data and redirect to the tags page
+        function saveRecipeData(recipe) {
+            let recipes = loadRecipes();
+            const mode = new URLSearchParams(window.location.search).get('mode');
+    
+            if (mode === 'edit') {
+                // Edit mode
+                const index = parseInt(new URLSearchParams(window.location.search).get('index'), 10);
+                recipes[index] = recipe; // Update existing recipe
+            } else {
+                // Add mode
+                recipes.push(recipe); // Add new recipe
+            }
+    
+            saveRecipes(recipes);
+            alert('Recipe saved!');
+            window.location.href = 'tags.html'; // Redirect to tags page
+        }
+    
+        // Function to clear the form
+        function clearForm() {
+            document.getElementById('recipeForm').reset();
+            document.getElementById('imagePreview').innerHTML = ''; // Clear image preview
+        }
+    
+        // Function to populate the form for editing
+        function populateFormForEdit() {
+            const params = new URLSearchParams(window.location.search);
+            const mode = params.get('mode');
+            if (mode === 'edit') {
+                const index = parseInt(params.get('index'), 10);
+                const recipes = loadRecipes();
+                const recipe = recipes[index];
+                
+                document.getElementById('recipeName').value = recipe.name;
+                document.getElementById('ingredients').value = recipe.ingredients;
+                document.getElementById('category').value = recipe.category;
+                document.getElementById('method').value = recipe.method;
+    
+                // Display the existing image if available
+                if (recipe.image) {
+                    const img = document.createElement('img');
+                    img.src = recipe.image;
+                    img.style.maxWidth = '100%';
+                    img.style.marginTop = '10px';
+                    document.getElementById('imagePreview').appendChild(img);
+                }
+    
+                document.getElementById('formTitle').textContent = 'Edit Recipe'; // Change title for edit mode
+            }
+        }
+    
+        // Event listeners
+        document.getElementById('saveBtn').addEventListener('click', addRecipe);
+        document.getElementById('clearBtn').addEventListener('click', clearForm);
+    
+        // Preview the uploaded image
+        document.getElementById('recipeImage').addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const img = document.createElement('img');
+                img.src = reader.result;
+                img.style.maxWidth = '100%';
+                img.style.marginTop = '10px';
+                document.getElementById('imagePreview').innerHTML = ''; // Clear previous image preview
+                document.getElementById('imagePreview').appendChild(img);
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        });
+    
+        // Populate the form if in edit mode
+        populateFormForEdit();
+    </script>
+    
+    
+</body>
+</html>
+
